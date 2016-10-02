@@ -1,7 +1,5 @@
 #include <stdio.h>
 #include <stdlib.h>
-#define TRUE 1
-#define FALSE 0
 #define MAX_STACK_SIZE 100
 typedef char element;
 typedef struct
@@ -12,12 +10,12 @@ typedef struct
 // 스택 초기화 함수
 void Init(StackType *s)
 {
-	s->top = NULL;
+	s->top = -1;
 }
 // 공백 검출 함수
 int is_empty(StackType *s)
 {
-	return (s->top == NULL);
+	return (s->top == -1);
 }
 // 포화 검출 함수
 int is_full(StackType *s)
@@ -32,7 +30,7 @@ void push(StackType *s, element item)
 		fprintf(stderr, "스택 포화 에러\n");
 		return;
 	}
-	else s->stack[++(s->top)];
+	else s->stack[++(s->top)] = item;
 }
 // 삭제 함수
 element pop(StackType *s)
