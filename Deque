@@ -1,0 +1,136 @@
+#include <stdio.h>
+#define TRUE 1
+#define FALSE 0
+
+typedef int element;
+typedef struct DlistNode
+{
+	element data;
+	struct Dlist *llink;
+	struct Dlist *rlink;
+}DlistNode;
+typedef struct DqeueType
+{
+	DlistNode *head;
+	DlistNode *tail;
+}DqeueType;
+
+// 에러 처리 함수
+void error(char *message)
+{
+	fprintf(stderr, "%s\n", message);
+	exit(1);
+}
+// 초기화 함수
+void Init(DqeueType*dq)
+{
+	dq->head = dq->tail = NULL;
+}
+// 공백 상태 함수
+int is_empty(DqeueType *dq)
+{
+	if(dq->head == NULL) return TRUE;
+	else return FALSE;
+}
+// 노드 삽입
+DlistNode *create_node(DlistNode *llink, element item, DlistNode *rlink)
+{
+	DlistNode *node = (DlistNode *)malloc(sizeof(DlistNode));
+	if (node == NULL) error("메모리 할당 에러\n");
+	node->llink = llink;
+	node->data = item;
+	node->rlink = rlink;
+	return node;
+}
+// near 에서의 삽입
+void add_near(DqeueType *dq, element item)
+{
+	DlistNode *new_node = create_node(dq->tail, item, NULL);
+	if (is_empty(dq))
+		dq->head = new_node;
+	else
+		dq->tail->rlink = new_node;
+
+	dq->tail = new_node;
+}
+// front 에서의 삽입
+void add_front(DqeueType *dq, element item)
+{
+	DlistNode *new_node = create_node(NULL, item, dq->head);
+	if (is_empty(dq))
+		dq->tail = new_node;
+	else
+		dq->head->llink = new_node;
+
+	dq->head = new_node;
+}
+
+
+// 전단에서의 삭제
+element delete_front(DqeueType *dq)
+{
+	element item;
+	DlistNode *removed_node;
+
+	if (is_empty(dq)) error("공백\n");
+	else
+	{
+		removed_node = dq->head;		// 삭제할 노드
+		item = removed_node->data;	// 데이터 추출
+		dq->head = dq->head->rlink;	// 헤드 포인터 변경
+		free(removed_node);			// 메모리 공간 반납
+
+		if (dq->head == NULL)
+			dq->tail = NULL;
+		else
+			dq->head->llink = NULL;
+	}
+	return item;
+}
+// 후단에서의 삭제
+element delete_near(DqeueType *dq)
+{
+	element item;
+	DlistNode *removed_node;
+
+	if (is_empty(dq)) error("공백\n");
+	else
+	{
+		removed_node = dq->tail;
+		item = removed_node->data;
+		dq->tail = dq->tail->llink;
+		free(removed_node);
+
+		if (dq->tail == NULL)
+			dq->head = NULL;
+		else
+			dq->tail->rlink = NULL;
+	}
+	return item;
+}
+// 출력 함수
+void display(DqeueType *dq)
+{
+	DlistNode *p;
+	printf("( ");
+	for (p = dq->head; p != NULL; p = p->rlink)
+	{
+		printf(" %d ", p->data);
+	}
+	printf(" )\n");
+}
+// 주 함수
+int main()
+{
+	DqeueType deque;
+
+	Init(&deque);
+	add_front(&deque, 10);
+	add_front(&deque, 20);
+	add_near(&deque, 30);
+	display(&deque);
+
+	delete_front(&deque);
+	delete_near(&deque);
+	display(&deque);
+}
