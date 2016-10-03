@@ -1,0 +1,95 @@
+#include <stdio.h>
+#include <malloc.h>
+
+typedef int element;
+typedef struct QueueNode
+{
+	element item;
+	struct QueueNode *link;
+} QueueNode;
+typedef struct
+{
+	QueueNode *front, *near;
+}QueueType;
+
+// 에러 체크 함수
+void error(char *message)
+{
+	fprintf(stderr, "%s\n", message);
+	exit(1);
+}
+// 초기화 함수
+void Init(QueueType*q)
+{
+	q->front = q->near = NULL;
+}
+// 공백 상태 함수
+int is_empty(QueueType *q)
+{
+	return (q->front == NULL);
+}
+
+
+
+
+// 삽입 함수
+void enqueue(QueueType *q, element item)
+{
+	QueueNode *tmp = (QueueNode *)malloc(sizeof(QueueNode));
+	if (tmp == NULL) 
+		error("메모리 할당 에러\n");
+	else
+	{
+		tmp->item = item;
+		tmp->link = NULL;
+		if (is_empty(q))
+		{
+			q->front = tmp;
+			q->near = tmp;
+		}
+		else
+		{
+			q->near->link = tmp;
+			q->near = tmp;
+		}
+	}
+}
+// 삭제 함수
+element dequeue(QueueType*q)
+{
+	QueueNode *tmp = q->front;
+	element item;
+
+	if (is_empty(q))
+		error("공백 상태\n");
+	else
+	{
+		item = tmp->item;
+		q->front = q->front->link;
+		if (q->front == NULL)
+			q->near = NULL;
+		free(tmp);
+		return item;
+	}
+}
+// 피크 함수
+element peek(QueueType *q)
+{
+	if (is_empty(q))
+		error("공백 에러\n");
+	else return q->front->item;
+}
+// 주 함수
+int main()
+{
+	QueueType q;
+
+	Init(&q);
+	enqueue(&q, 1);
+	enqueue(&q, 2);
+	enqueue(&q, 3);
+	printf("dequeue() = %d\n", dequeue(&q));
+	printf("dequeue() = %d\n", dequeue(&q));
+	printf("dequeue() = %d\n", dequeue(&q));
+}
+
