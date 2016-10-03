@@ -1,0 +1,86 @@
+#include <stdio.h>
+#include <malloc.h>
+
+typedef int element;
+typedef struct StackNode
+{
+	element item;
+	struct StackNode *link;
+} StackNode;
+typedef struct
+{
+	StackNode *top;
+} LinkedStackType;
+
+// 스택 초기화 함수
+void Init(LinkedStackType *s)
+{
+	s->top = NULL;
+}
+// 공백 상태 함수
+int is_empty(LinkedStackType *s)
+{
+	return (s->top == NULL);
+}
+// 삽입 함수
+void push(LinkedStackType *s, element item)
+{
+	StackNode* tmp = (StackNode *)malloc(sizeof(StackNode));
+	if (tmp == NULL)
+	{
+		fprintf(stderr, "메모리 할당 에러\n");
+		return;
+	}
+	else
+	{
+		tmp->item = item;
+		tmp->link = s->top;
+		s->top = tmp;
+	}
+}
+// 삭제 함수
+element pop(LinkedStackType *s)
+{
+	if (is_empty(s))
+	{
+		fprintf(stderr, "스택 공백 에러\n");
+		exit(1);
+	}
+	else
+	{
+		StackNode *tmp = s->top;
+		element item = tmp->item;
+		s->top = s->top->link;
+		free(tmp);
+		return item;
+	}
+}
+// 피크 함수
+element peek(LinkedStackType *s)
+{
+	if (is_empty(s))
+	{
+		fprintf(stderr, "스택 공백 에러\n");
+		exit(1);
+	}
+	else
+	{
+		return s->top->item;
+	}
+}
+// 주함수
+int main()
+{
+	LinkedStackType s;
+
+	Init(&s);
+
+	push(&s, 1);
+	push(&s, 2);
+	push(&s, 3);
+
+	printf("%d\n", pop(&s));
+	printf("%d\n", pop(&s));
+	printf("%d\n", pop(&s));
+	printf("%d\n", is_empty(&s));
+}
